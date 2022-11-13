@@ -351,4 +351,10 @@ declare module 'mutate-animate' {
      * @param cps 控制点，是[x, y]数组
      */
     export function bezier(start: Point, end: Point, ...cps: Point[]): PathFn;
+
+    /**
+     * 等待一定时长
+     * @param time 等待的毫秒数
+     */
+    export function sleep(time: number): Promise<void>;
 }
