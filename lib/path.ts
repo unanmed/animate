@@ -1,30 +1,39 @@
-import { comNum, TimingFn } from "./timing";
+import { comNum, TimingFn } from './timing';
 import { add } from './timing';
 
-export type Point = [x: number, y: number]
+export type Point = [x: number, y: number];
 
 /**
  * 路径函数，输入一个0-1的数，输出一个该时刻的位置
  */
-export type PathFn = (input: number) => Point
+export type PathFn = (input: number) => Point;
 
-export type PathG = (...args: any) => PathFn
+export type PathG = (...args: any) => PathFn;
 
 /**
  * 圆形轨迹
  * @param r 半径大小
  * @param n 旋转的圈数
+ * @param center 圆心
+ * @param start 起始角度
  * @param timing 半径变化函数，1表示原长，0表示半径为0
  * @param inverse 是否翻转timing函数
  */
-export function circle(r: number, n: number = 1, timing: TimingFn = x => 1, inverse: boolean = false): PathFn {
-    return (input) => {
-        const a = n * input * Math.PI * 2;
+export function circle(
+    r: number,
+    n: number = 1,
+    center: [number, number] = [0, 0],
+    start: number = 0,
+    timing: TimingFn = x => 1,
+    inverse: boolean = false
+): PathFn {
+    return input => {
+        const a = n * input * Math.PI * 2 + (start * Math.PI) / 180;
         const cos = Math.cos(a);
         const sin = Math.sin(a);
         const radius = r * timing(inverse ? timing(1 - input) : timing(input));
-        return [radius * cos, radius * sin];
-    }
+        return [radius * cos + center[0], radius * sin + center[1]];
+    };
 }
 
 /**
@@ -37,15 +46,17 @@ export function bezier(start: Point, end: Point, ...cps: Point[]): PathFn {
     const points = [start].concat(cps);
     points.push(end);
     const all = points.length;
-    const coms = Array(all).fill(0).map((v, i) => comNum(i, all - 1));
+    const coms = Array(all)
+        .fill(0)
+        .map((v, i) => comNum(i, all - 1));
 
-    return (input) => {
+    return input => {
         const x = coms.map((v, i) => {
-            return v * points[i][0] * ((1 - input) ** (all - i - 1)) * (input ** i);
+            return v * points[i][0] * (1 - input) ** (all - i - 1) * input ** i;
         });
         const y = coms.map((v, i) => {
-            return v * points[i][1] * ((1 - input) ** (all - i - 1)) * (input ** i);
+            return v * points[i][1] * (1 - input) ** (all - i - 1) * input ** i;
         });
         return [add(...x), add(...y)];
-    }
+    };
 }

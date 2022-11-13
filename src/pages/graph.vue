@@ -103,13 +103,21 @@ onMounted(() => {
             drawPath(canvas, circle(50), true);
             span.innerHTML = 'circle 50';
         } else if (i === 50) {
-            drawPath(canvas, circle(50, 3, linear()), true);
+            drawPath(canvas, circle(50, 3, void 0, void 0, linear()), true);
             span.innerHTML = 'circle 50 3 linear';
         } else if (i === 51) {
-            drawPath(canvas, circle(50, 3, bezier(0.9, 0.2, 0.3, 0.7)), true);
+            drawPath(
+                canvas,
+                circle(50, 3, void 0, void 0, bezier(0.9, 0.2, 0.3, 0.7)),
+                true
+            );
             span.innerHTML = 'circle 50 3 bezier(0.9, 0.2, 0.3, 0.7)';
         } else if (i === 52) {
-            drawPath(canvas, circle(50, 2, power(2, 'center'), true), true);
+            drawPath(
+                canvas,
+                circle(50, 2, void 0, void 0, power(2, 'center'), true),
+                true
+            );
             span.innerHTML = 'circle 50 2 power 2 center inverse';
         } else if (i === 53) {
             drawPath(canvas, bezierP([0, 0], [150, 100], [75, 20]));
