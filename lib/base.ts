@@ -10,7 +10,8 @@ type Listeners<H extends string> = { [T in H]: HookFn<T>[] };
 
 export abstract class AnimationBase<Hooks extends string> {
     /** 渐变函数 */
-    timing: TimingFn;
+    timing: TimingFn<1>;
+
     /** 变换时的相对模式，相对或绝对 */
     relation: 'relative' | 'absolute' = 'absolute';
     /** 渐变时间 */

@@ -25,6 +25,7 @@ export interface AnimateTargets {
         rotate: number;
         resize: number;
         shake: 0;
+        '@@bind': number[];
     };
     custom: Record<string, number>;
 }
@@ -36,6 +37,7 @@ export interface AnimateTickers {
         rotate: TickerFn;
         resize: TickerFn;
         shake: TickerFn;
+        '@@bind': TickerFn;
     };
     custom: Record<string, TickerFn>;
 }
@@ -50,10 +52,11 @@ export interface AnimationBaseLike {
 
 export class Animation extends AnimationBase<AnimateHook> {
     /** 震动变化函数 */
-    shakeTiming: TimingFn;
+    shakeTiming: TimingFn<1>;
     /** 根据路径移动时的路径函数 */
     path: PathFn;
-
+    /** 多属性绑定时的渐变函数 */
+    multiTiming: TimingFn<number>;
     /** 自定义的动画属性 */
     value: Record<string, number> = {};
     /** 放缩的大小 */
@@ -68,7 +71,8 @@ export class Animation extends AnimationBase<AnimateHook> {
             moveAs: [0, 0],
             resize: 0,
             rotate: 0,
-            shake: 0
+            shake: 0,
+            '@@bind': []
         },
         custom: {}
     };
@@ -79,7 +83,8 @@ export class Animation extends AnimationBase<AnimateHook> {
             moveAs: () => 0,
             resize: () => 0,
             rotate: () => 0,
-            shake: () => 0
+            shake: () => 0,
+            '@@bind': () => 0
         },
         custom: {}
     };
@@ -99,10 +104,16 @@ export class Animation extends AnimationBase<AnimateHook> {
     private sx: number = 0;
     private sy: number = 0;
 
+    /**
+     * 属性绑定信息
+     */
+    private bindInfo: string[] = [];
+
     constructor() {
         super();
         this.timing = n => n;
         this.shakeTiming = n => n;
+        this.multiTiming = n => [n, n];
         this.path = n => [n, n];
         this.applying = {
             move: false,
@@ -121,9 +132,19 @@ export class Animation extends AnimationBase<AnimateHook> {
         });
     }
 
-    mode(fn: TimingFn, shake: boolean = false): Animation {
-        if (shake) this.shakeTiming = fn;
-        else this.timing = fn;
+    mode(fn: TimingFn<number>): Animation;
+    mode(fn: TimingFn<1>, shake?: boolean): Animation;
+    mode(
+        fn: TimingFn<number> | TimingFn<1>,
+        shake: boolean = false
+    ): Animation {
+        const res = fn(0);
+        if (typeof res === 'number') {
+            if (shake) this.shakeTiming = fn as TimingFn<1>;
+            else this.timing = fn as TimingFn<1>;
+        } else {
+            this.multiTiming = fn as TimingFn<number>;
+        }
         return this;
     }
 
@@ -139,6 +160,25 @@ export class Animation extends AnimationBase<AnimateHook> {
 
     absolute(): Animation {
         this.relation = 'absolute';
+        return this;
+    }
+
+    /**
+     * 绑定多个属性，允许这几个属性在同一个动画函数的操作下变化
+     * @param attr 要绑定的属性
+     */
+    bind(...attr: string[]): Animation {
+        if (this.applying['@@bind'] === true) this.end(false, '@@bind');
+        this.bindInfo = attr;
+        return this;
+    }
+
+    /**
+     * 取消绑定所有的属性
+     */
+    unbind(): Animation {
+        if (this.applying['@@bind'] === true) this.end(false, '@@bind');
+        this.bindInfo = [];
         return this;
     }
 
@@ -303,6 +343,48 @@ export class Animation extends AnimationBase<AnimateHook> {
     }
 
     /**
+     * 绑定属性执行动画，与单个动画的执行不冲突
+     * @param first 是否插入到动画队列开头
+     */
+    applyMulti(first: boolean = false): Animation {
+        if (this.applying['@@bind'] === true) this.end(false, '@@bind');
+        this.applying['@@bind'] = true;
+
+        const list = this.bindInfo;
+        const origin = list.map(v => this.value[v]);
+        const start = Date.now();
+        const { multiTiming, relation, easeTime: time } = this;
+        const target = multiTiming(1);
+        if (target.length !== origin.length)
+            throw new TypeError(
+                `The number of binded animate attributes and timing function returns's length does not match. binded: ${list.length}, timing: ${target.length}`
+            );
+        this.hook('start');
+
+        const fn = () => {
+            const now = Date.now();
+            const delta = now - start;
+            if (delta > time) {
+                this.end(false, '@@bind');
+                return;
+            }
+            const rate = delta / time;
+            const per = multiTiming(rate);
+            list.forEach((v, i) => {
+                if (relation === 'absolute') {
+                    this.value[v] = per[i];
+                } else {
+                    this.value[v] = origin[i] + per[i];
+                }
+            });
+        };
+        this.ticker.add(fn, first);
+        this.animateFn.custom['@@bind'] = fn;
+        this.targetValue.system['@@bind'] = target;
+        return this;
+    }
+
+    /**
      * 执行系统属性的动画
      * @param key 系统动画id
      * @param n 最终值
@@ -381,13 +463,19 @@ export class Animation extends AnimationBase<AnimateHook> {
                 this.ticker.remove(this.animateFn.system.move[1]);
             } else if (type === 'moveAs') {
                 this.ticker.remove(this.animateFn.system.moveAs);
+            } else if (type === '@@bind') {
+                this.ticker.remove(this.animateFn.system['@@bind']);
             } else {
                 this.ticker.remove(
                     this.animateFn.system[
-                        type as Exclude<keyof AnimateTargets['system'], 'move'>
+                        type as Exclude<
+                            keyof AnimateTargets['system'],
+                            'move' | '@@bind'
+                        >
                     ]
                 );
             }
+
             if (type === 'move') {
                 const [x, y] = this.targetValue.system.move;
                 this.ox = x;
@@ -404,6 +492,11 @@ export class Animation extends AnimationBase<AnimateHook> {
             } else if (type === 'resize') {
                 this.size = this.targetValue.system.resize;
                 this.hook('resizeend', 'end');
+            } else if (type === '@@bind') {
+                const list = this.bindInfo;
+                list.forEach((v, i) => {
+                    this.value[v] = this.targetValue.system['@@bind'][i];
+                });
             } else {
                 this.sx = 0;
                 this.sy = 0;

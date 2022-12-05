@@ -20,6 +20,10 @@ async function play() {
     await ani();
 }
 
+function b(input: number): number[] {
+    return [input * 100, input ** 2 * 100, input ** 3 * 100, input ** 4 * 100];
+}
+
 async function ani() {
     const canvas = document.getElementById(
         'animate-canvas'
@@ -29,17 +33,27 @@ async function ani() {
     const ani = new Animation();
     ctx.save();
 
+    ani.register('a', 0);
+    ani.register('b', 0);
+    ani.register('c', 0);
+    ani.register('d', 0);
+
     ani.ticker.add(() => {
         ctx.beginPath();
         ctx.restore();
         ctx.save();
         ctx.clearRect(0, 0, 800, 800);
-        ctx.fillStyle = '#0ff';
-        ctx.arc(ani.x, ani.y, 50, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.fillStyle = '#000';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(ani.value.a.toFixed(0), 160, 400);
+        ctx.fillText(ani.value.b.toFixed(0), 320, 400);
+        ctx.fillText(ani.value.c.toFixed(0), 480, 400);
+        ctx.fillText(ani.value.d.toFixed(0), 640, 400);
     });
 
-    ani.mode(hyper('sin', 'in-out')).time(2000).absolute().move(400, 400);
+    // 多个属性绑定
+    ani.bind('a', 'b', 'c', 'd').mode(b).absolute().time(5000).applyMulti();
 }
 </script>
 

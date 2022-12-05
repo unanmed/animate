@@ -1,7 +1,16 @@
+type _Arr<N extends number, Fill, Now extends Fill[]> = Now['length'] extends N
+    ? Now
+    : _Arr<N, Fill, [Fill, ...Now]>;
+export type ArrayOf<N extends number, Fill> = number extends N
+    ? Fill[]
+    : _Arr<N, Fill, []>;
+
 /**
  * 渐变函数，输入0-1之间的数，输出一个0-1之间的数，说明了动画完成度，1表示结束，0表示开始
  */
-export type TimingFn = (input: number) => number;
+export type TimingFn<N extends number = 1> = (
+    input: number
+) => N extends 1 ? number : ArrayOf<N, number>;
 
 /**
  * in: 慢-快
@@ -39,7 +48,7 @@ const toEase = (
     mode: EaseMode,
     ein: TimingFn,
     eout: TimingFn = x => 1 - ein(1 - x)
-): TimingFn => {
+): TimingFn<1> => {
     if (mode === 'in') return ein;
     else if (mode === 'out') return eout;
     else if (mode === 'in-out')

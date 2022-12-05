@@ -6,7 +6,7 @@ export type Point = [x: number, y: number];
 /**
  * 路径函数，输入一个0-1的数，输出一个该时刻的位置
  */
-export type PathFn = (input: number) => Point;
+export type PathFn = TimingFn<2>;
 
 export type PathG = (...args: any) => PathFn;
 
