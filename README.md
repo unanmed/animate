@@ -98,6 +98,22 @@ ani.move(100, 100); // 执行运动到100,100的动画
 
 除此之外，库中还提供了一个等待函数`sleep(time: number)`，它允许你等待指定毫秒数，同样也是`async function`
 
+### 绑定
+
+你还可以绑定多个动画属性，让他们可以在同一个渐变函数的作用下变化。你可以使用 `ani.bind(...attr)`来绑定。绑定之后，这三个动画属性可以被一个返回了长度为 3 的数组的渐变函数执行。绑定使用 `ani.bind`，设置渐变函数仍然使用 `ani.mode`，注意它与单个动画属性是分开的，也就是它不会影响正常的渐变函数。然后使用 `ani.applyMulti` 即可执行动画
+
+```js
+// 自定义的一个三属性渐变函数
+function b(input) {
+    return [input * 100, input ** 2 * 100, input ** 3 * 100];
+}
+ani.bind('a', 'b', 'c') // 这样会绑定abc这三个动画属性
+    .mode(b) // 自定义的一个返回了长度为3的数组的函数
+    .time(5000)
+    .absolute()
+    .applyMulti(); // 执行这个动画
+```
+
 ### 监听
 
 你可以使用`ani.listen(type: string, fn: (e: Animation) => void)`来监听动画信息，由于不常用，这里便不再赘述。
