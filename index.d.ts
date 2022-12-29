@@ -211,6 +211,23 @@ declare module 'mutate-animate' {
          * @param first 是否将动画添加到执行列表的开头
          */
         apply(key: string, n: number, first?: boolean): Animation;
+
+        /**
+         * 绑定多个属性，允许这几个属性在同一个动画函数的操作下变化
+         * @param attr 要绑定的属性
+         */
+        bind(...attr: string[]): Animation;
+
+        /**
+         * 取消绑定所有的属性
+         */
+        unbind(): Animation;
+
+        /**
+         * 绑定属性执行动画，与单个动画的执行不冲突
+         * @param first 是否插入到动画队列开头
+         */
+        applyMulti(first?: boolean): Animation;
     }
 
     export class Ticker {
