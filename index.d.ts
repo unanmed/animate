@@ -1,8 +1,17 @@
+type _Arr<N extends number, Fill, Now extends Fill[]> = Now['length'] extends N
+    ? Now
+    : _Arr<N, Fill, [Fill, ...Now]>;
+type ArrayOf<N extends number, Fill> = number extends N
+    ? Fill[]
+    : _Arr<N, Fill, []>;
+
 declare module 'mutate-animate' {
     /**
-     * 渐变函数，输入0-1之间的数，输出一个0-1之间的数，说明了动画完成度，1表示结束，0表示开始
+     * 渐变函数，输入0-1之间的数，输出一个0-1之间的数或数组，说明了动画完成度，1表示结束，0表示开始
      */
-    type TimingFn = (input: number) => number;
+    type TimingFn<N extends number = 1> = (
+        input: number
+    ) => N extends 1 ? number : ArrayOf<N, number>;
 
     /**
      * in: 慢-快
@@ -19,7 +28,7 @@ declare module 'mutate-animate' {
     /**
      * 路径函数，输入一个0-1的数，输出一个该时刻的位置
      */
-    type PathFn = (input: number) => Point;
+    type PathFn = TimingFn<2>;
 
     type PathG = (...args: any) => PathFn;
 

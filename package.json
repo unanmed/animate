@@ -1,6 +1,6 @@
 {
   "name": "mutate-animate",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "type": "module",
   "description": "A highly customized animation library",
   "license": "MIT",
