@@ -220,11 +220,11 @@ export class Animation extends AnimationBase<AnimateHook> {
 
         this.applying.shake = true;
         const { easeTime: time, shakeTiming: timing } = this;
-        const start = Date.now();
+        const start = this.getTime();
         this.hook('start', 'shakestart');
 
         const fn = () => {
-            const now = Date.now();
+            const now = this.getTime();
             const delta = now - start;
             if (delta > time) {
                 this.ticker.remove(fn);
@@ -253,7 +253,7 @@ export class Animation extends AnimationBase<AnimateHook> {
         this.applying.moveAs = true;
         this.path = path;
         const { easeTime: time, relation, timing } = this;
-        const start = Date.now();
+        const start = this.getTime();
         const [ox, oy] = [this.x, this.y];
         const [tx, ty] = (() => {
             if (relation === 'absolute') return path(1);
@@ -265,7 +265,7 @@ export class Animation extends AnimationBase<AnimateHook> {
         this.hook('start', 'movestart');
 
         const fn = () => {
-            const now = Date.now();
+            const now = this.getTime();
             const delta = now - start;
             if (delta > time) {
                 this.end(true, 'moveAs');
@@ -319,13 +319,13 @@ export class Animation extends AnimationBase<AnimateHook> {
 
         this.applying[key] = true;
         const origin = this.value[key];
-        const start = Date.now();
+        const start = this.getTime();
         const { timing, relation, easeTime: time } = this;
         const d = relation === 'absolute' ? n - origin : n;
         this.hook('start');
 
         const fn = () => {
-            const now = Date.now();
+            const now = this.getTime();
             const delta = now - start;
             if (delta > time) {
                 this.end(false, key);
@@ -352,7 +352,7 @@ export class Animation extends AnimationBase<AnimateHook> {
 
         const list = this.bindInfo;
         const origin = list.map(v => this.value[v]);
-        const start = Date.now();
+        const start = this.getTime();
         const { multiTiming, relation, easeTime: time } = this;
         const target = multiTiming(1);
         if (target.length !== origin.length)
@@ -362,7 +362,7 @@ export class Animation extends AnimationBase<AnimateHook> {
         this.hook('start');
 
         const fn = () => {
-            const now = Date.now();
+            const now = this.getTime();
             const delta = now - start;
             if (delta > time) {
                 this.end(false, '@@bind');
@@ -399,7 +399,7 @@ export class Animation extends AnimationBase<AnimateHook> {
 
         this.applying[type] = true;
         const origin = this[key];
-        const start = Date.now();
+        const start = this.getTime();
         const timing = this.timing;
         const relation = this.relation;
         const time = this.easeTime;
@@ -408,7 +408,7 @@ export class Animation extends AnimationBase<AnimateHook> {
 
         // 每帧执行函数
         const fn = () => {
-            const now = Date.now();
+            const now = this.getTime();
             const delta = now - start;
             if (delta > time) {
                 // 避免move执行多次

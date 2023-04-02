@@ -33,6 +33,8 @@ async function ani() {
     const ani = new Animation();
     ctx.save();
 
+    ani.getTime = () => Date.now() / 10;
+
     ani.register('a', 0);
     ani.register('b', 0);
     ani.register('c', 0);

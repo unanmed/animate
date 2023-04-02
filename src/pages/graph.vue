@@ -42,7 +42,16 @@ onMounted(() => {
         const span = document.getElementById(
             `graph-span-${j}`
         ) as HTMLSpanElement;
-        if (i >= 0 && i <= 3) {
+        if (i === 0) {
+            const fn = (input: number, a?: boolean): number => {
+                // if (!a) input *= 700;
+                const res =
+                    ((input % 700) / 700 + 1) * (20 * 2 ** (input / 700));
+                if (input === 1 && a) return res;
+                else return res / fn(1, true);
+            };
+            drawGraph(canvas, fn);
+        } else if (i >= 1 && i <= 3) {
             drawGraph(canvas, trigo('sin', mode[i % 4]));
             span.innerHTML = `trigo sin ${mode[i % 4]}`;
         } else if (i <= 7) {

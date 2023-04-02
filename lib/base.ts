@@ -19,6 +19,8 @@ export abstract class AnimationBase<Hooks extends string> {
     /** 正在执行的动画 */
     applying: Record<string, boolean> = {};
 
+    getTime: () => number = Date.now;
+
     /** 每帧执行函数 */
     readonly ticker: Ticker = new Ticker();
     /** 数据信息 */
