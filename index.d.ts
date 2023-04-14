@@ -376,7 +376,11 @@ declare module 'mutate-animate' {
      * @param end 终点
      * @param cps 控制点，是[x, y]数组
      */
-    export function bezier(start: Point, end: Point, ...cps: Point[]): PathFn;
+    export function bezierPath(
+        start: Point,
+        end: Point,
+        ...cps: Point[]
+    ): PathFn;
 
     /**
      * 等待一定时长
