@@ -76,6 +76,9 @@ declare module 'mutate-animate' {
         /** 所有的监听函数 */
         protected readonly listener: Listeners<Hooks | BaseHook>;
 
+        /** 时间获取函数 */
+        getTime: () => number;
+
         /**
          * 设置移动时的动画函数
          * @param fn 动画函数
