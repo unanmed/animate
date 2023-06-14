@@ -160,6 +160,11 @@ declare module 'mutate-animate' {
          * @param shake 是否是震动变化
          */
         mode(fn: TimingFn, shake?: boolean): Animation;
+        /**
+         * 设置多个属性绑定时的动画函数
+         * @param fn 动画函数
+         */
+        mode(fn: TimingFn<number>): Animation;
 
         /**
          * 设置渐变动画时间
