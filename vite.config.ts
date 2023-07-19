@@ -9,7 +9,8 @@ export default defineConfig({
         lib: {
             entry: resolve(__dirname, 'lib/index.ts'),
             formats: ['es', 'umd', 'iife'],
-            name: 'Animate'
+            name: 'Animate',
+            fileName: 'index'
         },
         rollupOptions: {
             external: ['vue', 'less'],
@@ -19,6 +20,7 @@ export default defineConfig({
                     less: 'Less'
                 }
             }
-        }
+        },
+        
     }
 });
