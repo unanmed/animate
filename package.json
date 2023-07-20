@@ -10,11 +10,11 @@
     "dist",
     "index.d.ts"
   ],
-  "main": "./dist/mutate-animate.js",
+  "main": "./dist/index.js",
   "exports": {
     ".": {
-      "import": "./dist/mutate-animate.js",
-      "require": "./dist/mutate-animate.umd.js",
+      "import": "./dist/index.js",
+      "require": "./dist/index.umd.js",
       "type": "./dist/index.d.ts"
     }
   },
