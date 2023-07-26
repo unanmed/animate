@@ -82,6 +82,8 @@ export class Transition extends AnimationBase<TransitionHook> {
         const d = to - from;
         this.target[key] = to;
 
+        if (time <= 0) this.end(key);
+
         const fn = () => {
             const now = this.getTime();
             const delta = now - start;

@@ -223,6 +223,8 @@ export class Animation extends AnimationBase<AnimateHook> {
         const start = this.getTime();
         this.hook('start', 'shakestart');
 
+        if (time <= 0) this.end(false, 'shake');
+
         const fn = () => {
             const now = this.getTime();
             const delta = now - start;
@@ -263,6 +265,8 @@ export class Animation extends AnimationBase<AnimateHook> {
             }
         })();
         this.hook('start', 'movestart');
+
+        if (time <= 0) this.end(false, 'moveAs');
 
         const fn = () => {
             const now = this.getTime();
@@ -324,6 +328,8 @@ export class Animation extends AnimationBase<AnimateHook> {
         const d = relation === 'absolute' ? n - origin : n;
         this.hook('start');
 
+        if (time <= 0) this.end(false, key);
+
         const fn = () => {
             const now = this.getTime();
             const delta = now - start;
@@ -360,6 +366,8 @@ export class Animation extends AnimationBase<AnimateHook> {
                 `The number of binded animate attributes and timing function returns's length does not match. binded: ${list.length}, timing: ${target.length}`
             );
         this.hook('start');
+
+        if (time <= 0) this.end(false, '@@bind');
 
         const fn = () => {
             const now = this.getTime();
@@ -405,6 +413,8 @@ export class Animation extends AnimationBase<AnimateHook> {
         const time = this.easeTime;
         const d = relation === 'absolute' ? n - origin : n;
         this.hook('start', `${type}start`);
+
+        if (time <= 0) this.end(false, type);
 
         // 每帧执行函数
         const fn = () => {
