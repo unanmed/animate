@@ -89,6 +89,7 @@ export class Transition extends AnimationBase<TransitionHook> {
             const delta = now - start;
             if (delta >= time) {
                 this.end(key);
+                return;
             }
             const rate = delta / time;
             this.now[key] = timing(rate) * d + from;

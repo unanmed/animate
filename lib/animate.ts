@@ -234,6 +234,7 @@ export class Animation extends AnimationBase<AnimateHook> {
                 this.sx = 0;
                 this.sy = 0;
                 this.hook('end', 'shakeend');
+                return;
             }
             const rate = delta / time;
             const p = timing(rate);
