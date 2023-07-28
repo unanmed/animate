@@ -223,7 +223,7 @@ export class Animation extends AnimationBase<AnimateHook> {
         const start = this.getTime();
         this.hook('start', 'shakestart');
 
-        if (time <= 0) this.end(false, 'shake');
+        if (time <= 0) return this.end(false, 'shake'), this;
 
         const fn = () => {
             const now = this.getTime();
@@ -267,7 +267,7 @@ export class Animation extends AnimationBase<AnimateHook> {
         })();
         this.hook('start', 'movestart');
 
-        if (time <= 0) this.end(false, 'moveAs');
+        if (time <= 0) return this.end(false, 'moveAs'), this;
 
         const fn = () => {
             const now = this.getTime();
@@ -329,7 +329,7 @@ export class Animation extends AnimationBase<AnimateHook> {
         const d = relation === 'absolute' ? n - origin : n;
         this.hook('start');
 
-        if (time <= 0) this.end(false, key);
+        if (time <= 0) return this.end(false, key), this;
 
         const fn = () => {
             const now = this.getTime();
@@ -368,7 +368,7 @@ export class Animation extends AnimationBase<AnimateHook> {
             );
         this.hook('start');
 
-        if (time <= 0) this.end(false, '@@bind');
+        if (time <= 0) return this.end(false, '@@bind'), this;
 
         const fn = () => {
             const now = this.getTime();
@@ -415,7 +415,7 @@ export class Animation extends AnimationBase<AnimateHook> {
         const d = relation === 'absolute' ? n - origin : n;
         this.hook('start', `${type}start`);
 
-        if (time <= 0) this.end(false, type);
+        if (time <= 0) return this.end(false, type);
 
         // 每帧执行函数
         const fn = () => {
