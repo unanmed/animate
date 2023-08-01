@@ -454,7 +454,7 @@ export class Animation extends AnimationBase<AnimateHook> {
             );
         if (type === 'reregister')
             throw new Error(
-                `Cannot register a animated property twice. Info: ${text}`
+                `Cannot register an animated property twice. Info: ${text}`
             );
         throw new Error(text);
     }
