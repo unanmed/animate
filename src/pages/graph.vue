@@ -81,15 +81,6 @@ onMounted(() => {
         } else if (i <= 39) {
             drawGraph(canvas, inverseTrigo('tan', mode[i % 4]));
             span.innerHTML = `in-trigo tan ${mode[i % 4]}`;
-        } else if (i === 40) {
-            drawGraph(canvas, linear());
-            span.innerHTML = 'linear';
-        } else if (i === 41) {
-            drawGraph(canvas, bezier(0.7));
-            span.innerHTML = 'bezier(0.7)';
-        } else if (i === 42) {
-            drawGraph(canvas, bezier(0.3, 0.2));
-            span.innerHTML = 'bezier(0.3, 0.2)';
         } else if (i === 43) {
             drawGraph(canvas, bezier(0.3, 0.2, 0.1));
             span.innerHTML = 'bezier(0.3, 0.2, 0.1)';
@@ -110,10 +101,10 @@ onMounted(() => {
             span.innerHTML = 'shake 30 power 3 in-out';
         } else if (i === 49) {
             drawPath(canvas, circle(50), true);
-            span.innerHTML = 'circle 50';
+            span.innerHTML = 'signalX';
         } else if (i === 50) {
             drawPath(canvas, circle(50, 3, void 0, void 0, linear()), true);
-            span.innerHTML = 'circle 50 3 linear';
+            span.innerHTML = 'signalY';
         } else if (i === 51) {
             drawPath(
                 canvas,
