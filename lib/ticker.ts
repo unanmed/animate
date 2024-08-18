@@ -20,7 +20,7 @@ requestAnimationFrame(fn);
 
 export class Ticker {
     /** 所有的ticker函数 */
-    funcs: TickerFn[] = [];
+    funcs: Set<TickerFn> = new Set();
     /** 当前ticker的状态 */
     status: 'stop' | 'running' = 'stop';
     /** 开始时间 */
@@ -36,9 +36,8 @@ export class Ticker {
      * 添加ticker函数
      * @param fn 要添加的函数
      */
-    add(fn: TickerFn, first: boolean = false): Ticker {
-        if (!first) this.funcs.push(fn);
-        else this.funcs.unshift(fn);
+    add(fn: TickerFn): Ticker {
+        this.funcs.add(fn);
         return this;
     }
 
@@ -47,9 +46,7 @@ export class Ticker {
      * @param fn 要去除的函数
      */
     remove(fn: TickerFn): Ticker {
-        const index = this.funcs.findIndex(v => v === fn);
-        if (index === -1) return this;
-        this.funcs.splice(index, 1);
+        this.funcs.delete(fn);
         return this;
     }
 
@@ -57,7 +54,7 @@ export class Ticker {
      * 清空这个ticker的所有ticker函数
      */
     clear(): void {
-        this.funcs = [];
+        this.funcs.clear();
     }
 
     /**

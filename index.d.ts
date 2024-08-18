@@ -225,9 +225,8 @@ declare module 'mutate-animate' {
          * 执行某个自定义属性的动画
          * @param key 要执行的自定义属性
          * @param n 属性的最终值
-         * @param first 是否将动画添加到执行列表的开头
          */
-        apply(key: string, n: number, first?: boolean): Animation;
+        apply(key: string, n: number): Animation;
 
         /**
          * 绑定多个属性，允许这几个属性在同一个动画函数的操作下变化
@@ -242,14 +241,13 @@ declare module 'mutate-animate' {
 
         /**
          * 绑定属性执行动画，与单个动画的执行不冲突
-         * @param first 是否插入到动画队列开头
          */
-        applyMulti(first?: boolean): Animation;
+        applyMulti(): Animation;
     }
 
     export class Ticker {
         /** 所有的ticker函数 */
-        funcs: TickerFn[];
+        funcs: Set<TickerFn>;
         /** 当前ticker的状态 */
         status: 'stop' | 'running';
         /** 开始时间 */

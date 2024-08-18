@@ -286,7 +286,7 @@ export class Animation extends AnimationBase<AnimateHook> {
                 this.oy = oy + y;
             }
         };
-        this.ticker.add(fn, true);
+        this.ticker.add(fn);
         this.animateFn.system.moveAs = fn;
         this.targetValue.system.moveAs = [tx, ty];
 
@@ -313,9 +313,8 @@ export class Animation extends AnimationBase<AnimateHook> {
      * 执行某个自定义属性的动画
      * @param key 要执行的自定义属性
      * @param n 属性的最终值
-     * @param first 是否将动画添加到执行列表的开头
      */
-    apply(key: string, n: number, first: boolean = false): Animation {
+    apply(key: string, n: number): Animation {
         if (this.applying[key] === true) this.end(false, key);
         if (!(key in this.value))
             this.error(
@@ -342,7 +341,7 @@ export class Animation extends AnimationBase<AnimateHook> {
             const per = timing(rate);
             this.value[key] = origin + per * d;
         };
-        this.ticker.add(fn, first);
+        this.ticker.add(fn);
         this.animateFn.custom[key] = fn;
         this.targetValue.custom[key] = d + origin;
 
@@ -351,9 +350,8 @@ export class Animation extends AnimationBase<AnimateHook> {
 
     /**
      * 绑定属性执行动画，与单个动画的执行不冲突
-     * @param first 是否插入到动画队列开头
      */
-    applyMulti(first: boolean = false): Animation {
+    applyMulti(): Animation {
         if (this.applying['@@bind'] === true) this.end(false, '@@bind');
         this.applying['@@bind'] = true;
 
@@ -387,7 +385,7 @@ export class Animation extends AnimationBase<AnimateHook> {
                 }
             });
         };
-        this.ticker.add(fn, first);
+        this.ticker.add(fn);
         this.animateFn.custom['@@bind'] = fn;
         this.targetValue.system['@@bind'] = target;
         return this;
@@ -431,7 +429,7 @@ export class Animation extends AnimationBase<AnimateHook> {
             this[key] = origin + d * per;
             if (key !== 'oy') this.hook(type);
         };
-        this.ticker.add(fn, true);
+        this.ticker.add(fn);
         if (key === 'ox') this.animateFn.system.move[0] = fn;
         else if (key === 'oy') this.animateFn.system.move[1] = fn;
         else this.animateFn.system[type as Exclude<AnimateType, 'move'>] = fn;
