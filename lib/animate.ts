@@ -413,7 +413,7 @@ export class Animation extends AnimationBase<AnimateHook> {
         const d = relation === 'absolute' ? n - origin : n;
         this.hook('start', `${type}start`);
 
-        if (time <= 0) return this.end(false, type);
+        if (time <= 0) return this.end(true, type);
 
         // 每帧执行函数
         const fn = () => {
